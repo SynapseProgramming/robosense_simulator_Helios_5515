@@ -26,6 +26,16 @@ link_directories(
   ${GAZEBO_LIBRARY_DIRS}
 )
 
+add_executable(pclmerger  src/pclmerger.cpp)
+add_dependencies(pclmerger
+  ${catkin_EXPORTED_TARGETS}
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+)
+target_link_libraries(pclmerger
+  ${catkin_LIBRARIES}
+)
+
+
 add_library(gazebo_ros_robosense_laser src/GazeboRosRoboSenseLaser.cpp)
 target_link_libraries(gazebo_ros_robosense_laser
   ${catkin_LIBRARIES}
