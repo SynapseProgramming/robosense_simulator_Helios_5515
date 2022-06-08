@@ -12,8 +12,6 @@ class pclmerger {
 public:
   pclmerger();
 
-  // void start();
-
   void callback(const sensor_msgs::PointCloud2ConstPtr &fourf,
                 const sensor_msgs::PointCloud2ConstPtr &fivef);
 
@@ -28,8 +26,6 @@ private:
       sync;
 
   sensor_msgs::PointCloud2 result;
-  sensor_msgs::PointCloud2 five;
-  sensor_msgs::PointCloud2 four;
 };
 
 #endif /*                                                                      \
