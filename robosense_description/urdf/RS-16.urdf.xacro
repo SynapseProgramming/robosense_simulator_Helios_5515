@@ -128,7 +128,11 @@
       </gazebo>
     </xacro:macro>
 
-    <xacro:laserscan name="high" vertmin="-55" vertmax="-10" layers="16" topic="yes"/>
+    <!-- channels from -10 to -55 degree inclusive. 16 laser planes -->
+    <xacro:laserscan name="five" vertmin="-55" vertmax="-10" layers="16" topic="five"/>
+
+    <!-- channel at -8 degree inclusive. 1 laser plane -->
+    <xacro:laserscan name="four" vertmin="-8" vertmax="-8" layers="1" topic="four"/>
 
   </xacro:macro>
 </robot>
