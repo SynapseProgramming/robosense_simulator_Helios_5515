@@ -11,7 +11,12 @@ pclmerger::pclmerger()
 
 void pclmerger::callback(const sensor_msgs::PointCloud2ConstPtr &fourf,
                          const sensor_msgs::PointCloud2ConstPtr &fivef) {
+
+  pcl::concatenatePointCloud(*fourf, *fivef, result);
   std::cout << "ran\n";
+  result.fields[3].name = "intensity";
+  result.header.frame_id = "five";
+  pub.publish(result);
 }
 // void pclmerger::start() {
 //
@@ -25,11 +30,11 @@ void pclmerger::callback(const sensor_msgs::PointCloud2ConstPtr &fourf,
 //     if (second == NULL)
 //       ROS_INFO("No laser messages received");
 //
-//     // pcl::concatenatePointCloud(*first, *second, result);
-//     std::cout << "ran\n";
-//     // result.fields[3].name = "intensity";
-//     // result.header.frame_id = "five";
-//     // pub.publish(result);
+// pcl::concatenatePointCloud(*first, *second, result);
+// std::cout << "ran\n";
+// result.fields[3].name = "intensity";
+// result.header.frame_id = "five";
+// pub.publish(result);
 //   }
 // }
 
