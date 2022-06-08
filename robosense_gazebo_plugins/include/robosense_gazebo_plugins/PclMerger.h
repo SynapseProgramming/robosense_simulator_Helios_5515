@@ -2,8 +2,9 @@
 #define PCLMERGER_H
 
 #include <iostream>
-#include <pcl/conversions.h>
+#include <pcl_ros/point_cloud.h>
 #include <ros/ros.h>
+#include <sensor_msgs/PointCloud2.h>
 
 class pclmerger {
 public:
@@ -13,6 +14,11 @@ public:
 
 private:
   ros::NodeHandle n;
+  ros::Publisher pub;
+
+  sensor_msgs::PointCloud2 result;
+  sensor_msgs::PointCloud2 five;
+  sensor_msgs::PointCloud2 four;
 };
 
 #endif /*                                                                      \
