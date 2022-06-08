@@ -12,16 +12,19 @@ class pclmerger {
 public:
   pclmerger();
 
-  void callback(const sensor_msgs::PointCloud2ConstPtr &fourf,
+  void callback(const sensor_msgs::PointCloud2ConstPtr &threef,
+                const sensor_msgs::PointCloud2ConstPtr &fourf,
                 const sensor_msgs::PointCloud2ConstPtr &fivef);
 
 private:
   ros::NodeHandle n;
   ros::Publisher pub;
 
+  message_filters::Subscriber<sensor_msgs::PointCloud2> threesub;
   message_filters::Subscriber<sensor_msgs::PointCloud2> foursub;
   message_filters::Subscriber<sensor_msgs::PointCloud2> fivesub;
   message_filters::TimeSynchronizer<sensor_msgs::PointCloud2,
+                                    sensor_msgs::PointCloud2,
                                     sensor_msgs::PointCloud2>
       sync;
 
