@@ -30,7 +30,7 @@
       </collision>
     </link>
 
-    <xacro:macro name="laserscan" params="name gpu hz min_angle max_angle vertmin vertmax samples layers topic collision_range max_range noise">
+    <xacro:macro name="laserscan" params="name vertmin vertmax layers topic">
 
       <joint name="${name}_base_scan_joint" type="fixed">
         <origin xyz="0 0 0.039" rpy="0 0 0"/>
@@ -129,20 +129,7 @@
       </gazebo>
     </xacro:macro>
 
-    <xacro:laserscan
-      name="high"
-      gpu="${gpu}"
-      hz="${hz}"
-      min_angle="${min_angle}"
-      max_angle="${max_angle}"
-      vertmin="-55"
-      vertmax="-10"
-      samples="${samples}"
-      layers="16"
-      topic="yes"
-      collision_range="${collision_range}"
-      max_range="${max_range}"
-      noise="${noise}"/>
+    <xacro:laserscan name="high" vertmin="-55" vertmax="-10" layers="16" topic="yes"/>
 
   </xacro:macro>
 </robot>
