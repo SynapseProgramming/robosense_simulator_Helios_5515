@@ -2,6 +2,7 @@
 #define PCLMERGER_H
 
 #include <iostream>
+#include <pcl/conversions.h>
 #include <ros/ros.h>
 
 class pclmerger {
