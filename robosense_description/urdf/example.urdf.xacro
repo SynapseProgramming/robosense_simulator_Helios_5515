@@ -31,7 +31,7 @@
   </link>
 
   <xacro:include filename="$(find robosense_description)/urdf/RS-16.urdf.xacro"/>
-  <xacro:RS-16 parent="base_link" name="robosense" hz="10" samples="1800" gpu="true">
+  <xacro:RS-16 parent="base_link" name="helios" hz="10" samples="1800" gpu="true">
     <origin xyz="0 0 1.4" rpy="0 0 0"/>
   </xacro:RS-16>
 
