@@ -3,7 +3,7 @@
 pclmerger::pclmerger()
     : pub(n.advertise<sensor_msgs::PointCloud2>("final", 100)),
       threesub(n, "/three", 1), foursub(n, "/four", 1), fivesub(n, "/five", 1),
-      sync(threesub, foursub, fivesub, 10) {
+      sync(MySyncPolicy(10), threesub, foursub, fivesub) {
   sync.registerCallback(&pclmerger::callback, this);
 
   std::cout << "pclmerger object has been created!" << std::endl;
