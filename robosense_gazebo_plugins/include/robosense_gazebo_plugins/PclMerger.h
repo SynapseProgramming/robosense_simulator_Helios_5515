@@ -24,16 +24,12 @@ private:
   typedef message_filters::sync_policies::ApproximateTime<
       sensor_msgs::PointCloud2, sensor_msgs::PointCloud2,
       sensor_msgs::PointCloud2>
-      MySyncPolicy;
+      TimePolicy;
 
   message_filters::Subscriber<sensor_msgs::PointCloud2> threesub;
   message_filters::Subscriber<sensor_msgs::PointCloud2> foursub;
   message_filters::Subscriber<sensor_msgs::PointCloud2> fivesub;
-  // message_filters::TimeSynchronizer<sensor_msgs::PointCloud2,
-  //                                   sensor_msgs::PointCloud2,
-  //                                   sensor_msgs::PointCloud2>
-  //     sync;
-  message_filters::Synchronizer<MySyncPolicy> sync;
+  message_filters::Synchronizer<TimePolicy> sync;
 
   sensor_msgs::PointCloud2 result;
 };
