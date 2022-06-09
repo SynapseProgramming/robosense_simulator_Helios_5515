@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
   gazebo_ros
 )
 find_package(gazebo REQUIRED)
+find_package(PCL 1.2 REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 
 catkin_package(
@@ -20,11 +21,24 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${GAZEBO_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
 )
 
 link_directories(
   ${GAZEBO_LIBRARY_DIRS}
 )
+link_directories(${PCL_LIBRARY_DIRS})
+
+add_executable(pclmerger  src/pclmerger.cpp)
+add_dependencies(pclmerger
+  ${catkin_EXPORTED_TARGETS}
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+)
+target_link_libraries(pclmerger
+  ${catkin_LIBRARIES}
+  ${PCL_LIBRARIES}
+)
+
 
 add_library(gazebo_ros_robosense_laser src/GazeboRosRoboSenseLaser.cpp)
 target_link_libraries(gazebo_ros_robosense_laser

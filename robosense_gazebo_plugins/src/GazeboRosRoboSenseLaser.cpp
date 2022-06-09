@@ -37,11 +37,11 @@
 #include <algorithm>
 #include <assert.h>
 
+#include <gazebo/common/Exception.hh>
 #include <gazebo/physics/World.hh>
 #include <gazebo/sensors/Sensor.hh>
-#include <sdf/sdf.hh>
 #include <sdf/Param.hh>
-#include <gazebo/common/Exception.hh>
+#include <sdf/sdf.hh>
 #if GAZEBO_GPU_RAY
 #include <gazebo/sensors/GpuRaySensor.hh>
 #else
@@ -56,28 +56,25 @@
 
 #if GAZEBO_GPU_RAY
 #define RaySensor GpuRaySensor
-#define STR_Gpu  "Gpu"
+#define STR_Gpu "Gpu"
 #define STR_GPU_ "GPU "
 #else
-#define STR_Gpu  ""
+#define STR_Gpu ""
 #define STR_GPU_ ""
 #endif
 
-namespace gazebo
-{
+namespace gazebo {
 // Register this plugin with the simulator
 GZ_REGISTER_SENSOR_PLUGIN(GazeboRosRobosenseLaser)
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constructor
-GazeboRosRobosenseLaser::GazeboRosRobosenseLaser() : nh_(NULL), gaussian_noise_(0), min_range_(0), max_range_(0)
-{
-}
+GazeboRosRobosenseLaser::GazeboRosRobosenseLaser()
+    : nh_(NULL), gaussian_noise_(0), min_range_(0), max_range_(0) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Destructor
-GazeboRosRobosenseLaser::~GazeboRosRobosenseLaser()
-{
+GazeboRosRobosenseLaser::~GazeboRosRobosenseLaser() {
   ////////////////////////////////////////////////////////////////////////////////
   // Finalize the controller / Custom Callback Queue
   laser_queue_.clear();
@@ -92,8 +89,8 @@ GazeboRosRobosenseLaser::~GazeboRosRobosenseLaser()
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load the controller
-void GazeboRosRobosenseLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf)
-{
+void GazeboRosRobosenseLaser::Load(sensors::SensorPtr _parent,
+                                   sdf::ElementPtr _sdf) {
   // Load plugin
   RayPlugin::Load(_parent, _sdf);
 
@@ -108,7 +105,8 @@ void GazeboRosRobosenseLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _
   parent_ray_sensor_ = boost::dynamic_pointer_cast<sensors::RaySensor>(_parent);
 #endif
   if (!parent_ray_sensor_) {
-    gzthrow("GazeboRosRobosense" << STR_Gpu << "Laser controller requires a " << STR_Gpu << "Ray Sensor as its parent");
+    gzthrow("GazeboRosRobosense" << STR_Gpu << "Laser controller requires a "
+                                 << STR_Gpu << "Ray Sensor as its parent");
   }
 
   robot_namespace_ = "/";
@@ -131,7 +129,8 @@ void GazeboRosRobosenseLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _
   }
 
   if (!_sdf->HasElement("max_range")) {
-    ROS_INFO("Robosense laser plugin missing <max_range>, defaults to infinity");
+    ROS_INFO(
+        "Robosense laser plugin missing <max_range>, defaults to infinity");
     max_range_ = INFINITY;
   } else {
     max_range_ = _sdf->GetElement("max_range")->Get<double>();
@@ -139,7 +138,8 @@ void GazeboRosRobosenseLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _
 
   min_intensity_ = std::numeric_limits<double>::lowest();
   if (!_sdf->HasElement("min_intensity")) {
-    ROS_INFO("Robosense laser plugin missing <min_intensity>, defaults to no clipping");
+    ROS_INFO("Robosense laser plugin missing <min_intensity>, defaults to no "
+             "clipping");
   } else {
     min_intensity_ = _sdf->GetElement("min_intensity")->Get<double>();
   }
@@ -160,8 +160,11 @@ void GazeboRosRobosenseLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _
 
   // Make sure the ROS node for Gazebo has already been initialized
   if (!ros::isInitialized()) {
-    ROS_FATAL_STREAM("A ROS node for Gazebo has not been initialized, unable to load plugin. "
-      << "Load the Gazebo system plugin 'libgazebo_ros_api_plugin.so' in the gazebo_ros package)");
+    ROS_FATAL_STREAM(
+        "A ROS node for Gazebo has not been initialized, unable to load "
+        "plugin. "
+        << "Load the Gazebo system plugin 'libgazebo_ros_api_plugin.so' in the "
+           "gazebo_ros package)");
     return;
   }
 
@@ -179,11 +182,12 @@ void GazeboRosRobosenseLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _
 
   // Advertise publisher with a custom callback queue
   if (topic_name_ != "") {
-    ros::AdvertiseOptions ao = ros::AdvertiseOptions::create<sensor_msgs::PointCloud2>(
-        topic_name_, 1,
-        boost::bind(&GazeboRosRobosenseLaser::ConnectCb, this),
-        boost::bind(&GazeboRosRobosenseLaser::ConnectCb, this),
-        ros::VoidPtr(), &laser_queue_);
+    ros::AdvertiseOptions ao =
+        ros::AdvertiseOptions::create<sensor_msgs::PointCloud2>(
+            topic_name_, 1,
+            boost::bind(&GazeboRosRobosenseLaser::ConnectCb, this),
+            boost::bind(&GazeboRosRobosenseLaser::ConnectCb, this),
+            ros::VoidPtr(), &laser_queue_);
     pub_ = nh_->advertise(ao);
   }
 
@@ -191,26 +195,30 @@ void GazeboRosRobosenseLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _
   parent_ray_sensor_->SetActive(false);
 
   // Start custom queue for laser
-  callback_laser_queue_thread_ = boost::thread( boost::bind( &GazeboRosRobosenseLaser::laserQueueThread,this ) );
+  callback_laser_queue_thread_ = boost::thread(
+      boost::bind(&GazeboRosRobosenseLaser::laserQueueThread, this));
 
 #if GAZEBO_MAJOR_VERSION >= 7
-  ROS_INFO("Robosense %slaser plugin ready, %i lasers", STR_GPU_, parent_ray_sensor_->VerticalRangeCount());
+  ROS_INFO("Robosense %slaser plugin ready, %i lasers", STR_GPU_,
+           parent_ray_sensor_->VerticalRangeCount());
 #else
-  ROS_INFO("Robosense %slaser plugin ready, %i lasers", STR_GPU_, parent_ray_sensor_->GetVerticalRangeCount());
+  ROS_INFO("Robosense %slaser plugin ready, %i lasers", STR_GPU_,
+           parent_ray_sensor_->GetVerticalRangeCount());
 #endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Subscribe on-demand
-void GazeboRosRobosenseLaser::ConnectCb()
-{
+void GazeboRosRobosenseLaser::ConnectCb() {
   boost::lock_guard<boost::mutex> lock(lock_);
   if (pub_.getNumSubscribers()) {
     if (!sub_) {
 #if GAZEBO_MAJOR_VERSION >= 7
-      sub_ = gazebo_node_->Subscribe(this->parent_ray_sensor_->Topic(), &GazeboRosRobosenseLaser::OnScan, this);
+      sub_ = gazebo_node_->Subscribe(this->parent_ray_sensor_->Topic(),
+                                     &GazeboRosRobosenseLaser::OnScan, this);
 #else
-      sub_ = gazebo_node_->Subscribe(this->parent_ray_sensor_->GetTopic(), &GazeboRosRobosenseLaser::OnScan, this);
+      sub_ = gazebo_node_->Subscribe(this->parent_ray_sensor_->GetTopic(),
+                                     &GazeboRosRobosenseLaser::OnScan, this);
 #endif
     }
     parent_ray_sensor_->SetActive(true);
@@ -225,8 +233,7 @@ void GazeboRosRobosenseLaser::ConnectCb()
   }
 }
 
-void GazeboRosRobosenseLaser::OnScan(ConstLaserScanStampedPtr& _msg)
-{
+void GazeboRosRobosenseLaser::OnScan(ConstLaserScanStampedPtr &_msg) {
 #if GAZEBO_MAJOR_VERSION >= 7
   const ignition::math::Angle maxAngle = parent_ray_sensor_->AngleMax();
   const ignition::math::Angle minAngle = parent_ray_sensor_->AngleMin();
@@ -240,8 +247,10 @@ void GazeboRosRobosenseLaser::OnScan(ConstLaserScanStampedPtr& _msg)
   const int verticalRayCount = parent_ray_sensor_->VerticalRayCount();
   const int verticalRangeCount = parent_ray_sensor_->VerticalRangeCount();
 
-  const ignition::math::Angle verticalMaxAngle = parent_ray_sensor_->VerticalAngleMax();
-  const ignition::math::Angle verticalMinAngle = parent_ray_sensor_->VerticalAngleMin();
+  const ignition::math::Angle verticalMaxAngle =
+      parent_ray_sensor_->VerticalAngleMax();
+  const ignition::math::Angle verticalMinAngle =
+      parent_ray_sensor_->VerticalAngleMin();
 #else
   math::Angle maxAngle = parent_ray_sensor_->GetAngleMax();
   math::Angle minAngle = parent_ray_sensor_->GetAngleMin();
@@ -255,8 +264,10 @@ void GazeboRosRobosenseLaser::OnScan(ConstLaserScanStampedPtr& _msg)
   const int verticalRayCount = parent_ray_sensor_->GetVerticalRayCount();
   const int verticalRangeCount = parent_ray_sensor_->GetVerticalRangeCount();
 
-  const math::Angle verticalMaxAngle = parent_ray_sensor_->GetVerticalAngleMax();
-  const math::Angle verticalMinAngle = parent_ray_sensor_->GetVerticalAngleMin();
+  const math::Angle verticalMaxAngle =
+      parent_ray_sensor_->GetVerticalAngleMax();
+  const math::Angle verticalMinAngle =
+      parent_ray_sensor_->GetVerticalAngleMin();
 #endif
 
   const double yDiff = maxAngle.Radian() - minAngle.Radian();
@@ -305,13 +316,13 @@ void GazeboRosRobosenseLaser::OnScan(ConstLaserScanStampedPtr& _msg)
       double intensity = _msg->scan().intensities(i + j * rangeCount);
       // Ignore points that lay outside range bands or optionally, beneath a
       // minimum intensity level.
-      if ((MIN_RANGE >= r) || (r >= MAX_RANGE) || (intensity < MIN_INTENSITY) ) {
+      if ((MIN_RANGE >= r) || (r >= MAX_RANGE) || (intensity < MIN_INTENSITY)) {
         continue;
       }
 
       // Noise
       if (gaussian_noise_ != 0.0) {
-        r += gaussianKernel(0,gaussian_noise_);
+        r += gaussianKernel(0, gaussian_noise_);
       }
 
       // Get angles of ray to get xyz for point
@@ -319,31 +330,32 @@ void GazeboRosRobosenseLaser::OnScan(ConstLaserScanStampedPtr& _msg)
       double pAngle;
 
       if (rangeCount > 1) {
-        yAngle = i * yDiff / (rangeCount -1) + minAngle.Radian();
+        yAngle = i * yDiff / (rangeCount - 1) + minAngle.Radian();
       } else {
         yAngle = minAngle.Radian();
       }
 
       if (verticalRayCount > 1) {
-        pAngle = j * pDiff / (verticalRangeCount -1) + verticalMinAngle.Radian();
+        pAngle =
+            j * pDiff / (verticalRangeCount - 1) + verticalMinAngle.Radian();
       } else {
         pAngle = verticalMinAngle.Radian();
       }
 
       // pAngle is rotated by yAngle:
       if ((MIN_RANGE < r) && (r < MAX_RANGE)) {
-        *((float*)(ptr + 0)) = r * cos(pAngle) * cos(yAngle);
-        *((float*)(ptr + 4)) = r * cos(pAngle) * sin(yAngle);
+        *((float *)(ptr + 0)) = r * cos(pAngle) * cos(yAngle);
+        *((float *)(ptr + 4)) = r * cos(pAngle) * sin(yAngle);
 #if GAZEBO_MAJOR_VERSION > 2
-        *((float*)(ptr + 8)) = r * sin(pAngle);
+        *((float *)(ptr + 8)) = r * sin(pAngle);
 #else
-        *((float*)(ptr + 8)) = -r * sin(pAngle);
+        *((float *)(ptr + 8)) = -r * sin(pAngle);
 #endif
-        *((float*)(ptr + 16)) = intensity;
+        *((float *)(ptr + 16)) = intensity;
 #if GAZEBO_MAJOR_VERSION > 2
-        *((uint16_t*)(ptr + 20)) = j; // ring
+        *((uint16_t *)(ptr + 20)) = j; // ring
 #else
-        *((uint16_t*)(ptr + 20)) = verticalRangeCount - 1 - j; // ring
+        *((uint16_t *)(ptr + 20)) = verticalRangeCount - 1 - j; // ring
 #endif
         ptr += POINT_STEP;
       }
@@ -366,12 +378,10 @@ void GazeboRosRobosenseLaser::OnScan(ConstLaserScanStampedPtr& _msg)
 // Custom Callback Queue
 ////////////////////////////////////////////////////////////////////////////////
 // Custom callback queue thread
-void GazeboRosRobosenseLaser::laserQueueThread()
-{
+void GazeboRosRobosenseLaser::laserQueueThread() {
   while (nh_->ok()) {
     laser_queue_.callAvailable(ros::WallDuration(0.01));
   }
 }
 
 } // namespace gazebo
-

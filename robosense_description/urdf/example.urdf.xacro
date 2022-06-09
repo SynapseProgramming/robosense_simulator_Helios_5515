@@ -30,9 +30,13 @@
     </inertial>
   </link>
 
-  <xacro:include filename="$(find robosense_description)/urdf/RS-16.urdf.xacro"/>
-  <xacro:RS-16 parent="base_link" name="robosense" topic="/rs_points" hz="20" samples="900" gpu="${gpu}">
-    <origin xyz="0 0 0.4" rpy="0 0 0"/>
-  </xacro:RS-16>
+  <xacro:include filename="$(find robosense_description)/urdf/RS-5515.urdf.xacro"/>
+  <!-- hz: scan rate of lidar. -->
+  <!-- samples: no. of points in a horizontal plane. -->
+  <!-- gpu: true to use gpu to compute pointcloud-->
+  <!-- noise: a greater value would result in more sensor noise -->
+  <xacro:RS-5515 parent="base_link" name="helios" hz="10" samples="1800" gpu="false" noise="0.002">
+    <origin xyz="0 0 1.35" rpy="0 0 0"/>
+  </xacro:RS-5515>
 
 </robot>
