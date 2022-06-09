@@ -30,22 +30,22 @@
       </collision>
     </link>
 
+    <!-- translation from base of lidar to the mid point of lidar -->
+    <joint name="${name}_base_scan_joint" type="fixed">
+      <origin xyz="0 0 0.039" rpy="0 0 0"/>
+      <parent link="robosense_base_link"/>
+      <child link="rslidar"/>
+    </joint>
+
+    <!-- main reference frame of all scans -->
+    <link name="rslidar"/>
+
     <xacro:macro name="laserscan" params="name vertmin vertmax layers topic">
 
-      <joint name="${name}_base_scan_joint" type="fixed">
-        <origin xyz="0 0 0.039" rpy="0 0 0"/>
-        <parent link="robosense_base_link"/>
-        <child link="${name}"/>
-      </joint>
-
-      <!-- link for laserscan frame -->
-      <link name="${name}"/>
-
       <!-- Gazebo requires the robosense_gazebo_plugins package -->
-      <gazebo reference="${name}">
+      <gazebo reference="rslidar">
         <xacro:if value="${gpu}">
-          <!-- channnel 17 to 32. 3 deg increment. -->
-          <sensor type="gpu_ray" name="${name}-RS16">
+          <sensor type="gpu_ray" name="${name}-5515">
             <pose>0 0 0 0 0 0</pose>
             <visualize>false</visualize>
             <update_rate>${hz}</update_rate>
@@ -78,7 +78,7 @@
             </ray>
             <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_robosense_gpu_laser.so">
               <topicName>${topic}</topicName>
-              <frameName>${name}</frameName>
+              <frameName>rslidar</frameName>
               <min_range>${min_range}</min_range>
               <max_range>${max_range}</max_range>
               <gaussianNoise>${noise}</gaussianNoise>
@@ -118,7 +118,7 @@
             </ray>
             <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_robosense_laser.so">
               <topicName>${topic}</topicName>
-              <frameName>${name}</frameName>
+              <frameName>rslidar</frameName>
               <min_range>${min_range}</min_range>
               <max_range>${max_range}</max_range>
               <gaussianNoise>${noise}</gaussianNoise>
@@ -136,6 +136,12 @@
 
     <!-- channel from 4 to -6.67 degree inclusive. 9 laser planes -->
     <xacro:laserscan name="three" vertmin="-6.67" vertmax="4" layers="9" topic="three"/>
+
+    <!-- channel from 5.5 to 7 degree inclusive. 2 laser planes -->
+    <xacro:laserscan name="two" vertmin="5.5" vertmax="7" layers="2" topic="two"/>
+
+    <!-- channel from 9 to 15 degree inclusive. 4 laser planes -->
+    <xacro:laserscan name="one" vertmin="9" vertmax="15" layers="4" topic="one"/>
 
   </xacro:macro>
 </robot>
