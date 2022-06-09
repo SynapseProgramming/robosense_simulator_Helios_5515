@@ -11,11 +11,6 @@
 
     <!-- link for bottom of lidar -->
     <link name="${name}_base_link">
-      <inertial>
-        <mass value="0.87"/>
-        <origin xyz="0 0 0"/>
-        <inertia ixx="0.001094695" ixy="0" ixz="0" iyy="0.001094695" iyz="0" izz="0.001245079"/>
-      </inertial>
       <visual>
         <origin rpy="0 0 0" xyz="0 0 0.05"/>
         <geometry>
