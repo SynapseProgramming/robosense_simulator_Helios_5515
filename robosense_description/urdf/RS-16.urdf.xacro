@@ -32,7 +32,7 @@
 
     <!-- translation from base of lidar to the mid point of lidar -->
     <joint name="${name}_base_scan_joint" type="fixed">
-      <origin xyz="0 0 0.039" rpy="0 0 0"/>
+      <origin xyz="0 0 0.050" rpy="0 0 0"/>
       <parent link="${name}_base_link"/>
       <child link="rslidar"/>
     </joint>
