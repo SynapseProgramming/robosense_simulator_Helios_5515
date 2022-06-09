@@ -16,7 +16,7 @@ void pclmerger::callback(const sensor_msgs::PointCloud2ConstPtr &threef,
   pcl::concatenatePointCloud(*fourf, *fivef, result);
   pcl::concatenatePointCloud(result, *threef, result);
   result.fields[3].name = "intensity";
-  result.header.frame_id = "five";
+  result.header.frame_id = "rslidar";
   pub.publish(result);
 }
 
