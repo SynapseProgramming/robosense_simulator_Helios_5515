@@ -9,7 +9,7 @@
   <arg name="world_name" default="$(find robosense_description)/world/example.world"/>
 
   <!-- Start gazebo and load the world -->
-  <include file="$(find gazebo_ros)/launch/empty_world.launch" >
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="paused" value="$(arg paused)"/>
     <arg name="use_sim_time" value="$(arg use_sim_time)"/>
     <arg name="gui" value="$(arg gui)"/>
@@ -19,16 +19,18 @@
     <arg name="world_name" value="$(arg world_name)"/>
   </include>
 
+  <node pkg="robosense_gazebo_plugins" type="pclmerger" name="pclmerger"/>
+
   <!-- Spawn the example robot -->
   <arg name="gpu" default="false"/>
-  <param name="robot_description" command="$(find xacro)/xacro '$(find robosense_description)/urdf/example.urdf.xacro' gpu:=$(arg gpu)" />
+  <param name="robot_description" command="$(find xacro)/xacro '$(find robosense_description)/urdf/example.urdf.xacro' gpu:=$(arg gpu)"/>
   <node pkg="gazebo_ros" type="spawn_model" name="spawn_model" args="-urdf -param /robot_description -model example"/>
   <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
-    <param name="publish_frequency" type="double" value="30.0" />
+    <param name="publish_frequency" type="double" value="30.0"/>
   </node>
 
   <!-- RViz -->
   <arg name="rviz" default="true"/>
-  <node if="$(arg rviz)" pkg="rviz" type="rviz" name="$(anon rviz)" respawn="false" output="screen" args="-d $(find robosense_description)/rviz/example.rviz" />
+  <node if="$(arg rviz)" pkg="rviz" type="rviz" name="$(anon rviz)" respawn="false" output="screen" args="-d $(find robosense_description)/rviz/example.rviz"/>
 
 </launch>

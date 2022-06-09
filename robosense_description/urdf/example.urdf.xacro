@@ -31,7 +31,11 @@
   </link>
 
   <xacro:include filename="$(find robosense_description)/urdf/RS-5515.urdf.xacro"/>
-  <xacro:RS-5515 parent="base_link" name="helios" hz="10" samples="1800" gpu="true">
+  <!-- hz: scan rate of lidar. -->
+  <!-- samples: no. of points in a horizontal plane. -->
+  <!-- gpu: true to use gpu to compute pointcloud-->
+  <!-- noise: a greater value would result in more sensor noise -->
+  <xacro:RS-5515 parent="base_link" name="helios" hz="10" samples="1800" gpu="true" noise="0.002">
     <origin xyz="0 0 1.35" rpy="0 0 0"/>
   </xacro:RS-5515>
 
