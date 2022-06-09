@@ -1,7 +1,7 @@
 #include "robosense_gazebo_plugins/PclMerger.h"
 
 pclmerger::pclmerger()
-    : pub(n.advertise<sensor_msgs::PointCloud2>("final", 100)),
+    : pub(n.advertise<sensor_msgs::PointCloud2>("rslidar_points", 100)),
       onesub(n, "/one", 1), twosub(n, "/two", 1), threesub(n, "/three", 1),
       foursub(n, "/four", 1), fivesub(n, "/five", 1),
       sync(TimePolicy(10), onesub, twosub, threesub, foursub, fivesub) {
