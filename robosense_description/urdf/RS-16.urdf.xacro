@@ -140,5 +140,8 @@
     <!-- channel from 5.5 to 7 degree inclusive. 2 laser planes -->
     <xacro:laserscan name="two" vertmin="5.5" vertmax="7" layers="2" topic="two"/>
 
+    <!-- channel from 9 to 15 degree inclusive. 4 laser planes -->
+    <xacro:laserscan name="one" vertmin="9" vertmax="15" layers="4" topic="one"/>
+
   </xacro:macro>
 </robot>
