@@ -10,7 +10,6 @@ Panels:
         - /TF1/Frames1
         - /five1
         - /PointCloud21
-        - /PointCloud22
       Splitter Ratio: 0.5
     Tree Height: 719
   - Class: rviz/Selection
@@ -48,13 +47,9 @@ Visualization Manager:
           Value: true
         base_link:
           Value: true
-        five:
-          Value: true
-        four:
-          Value: true
         robosense_base_link:
           Value: true
-        three:
+        rslidar:
           Value: true
       Marker Alpha: 1
       Marker Scale: 1
@@ -66,11 +61,7 @@ Visualization Manager:
         base_footprint:
           base_link:
             robosense_base_link:
-              five:
-                {}
-              four:
-                {}
-              three:
+              rslidar:
                 {}
       Update Interval: 0
       Value: true
@@ -155,25 +146,25 @@ Visualization Manager:
       Axis: Z
       Channel Name: intensity
       Class: rviz/PointCloud2
-      Color: 255; 255; 255
-      Color Transformer: Intensity
+      Color: 245; 121; 0
+      Color Transformer: FlatColor
       Decay Time: 0
-      Enabled: false
+      Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Min Color: 0; 0; 0
-      Name: PointCloud2
+      Name: three
       Position Transformer: XYZ
       Queue Size: 10
       Selectable: true
       Size (Pixels): 3
       Size (m): 0.009999999776482582
       Style: Flat Squares
-      Topic: /final
+      Topic: /three
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
-      Value: false
+      Value: true
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -183,10 +174,10 @@ Visualization Manager:
       Axis: Z
       Channel Name: intensity
       Class: rviz/PointCloud2
-      Color: 245; 121; 0
+      Color: 115; 210; 22
       Color Transformer: FlatColor
       Decay Time: 0
-      Enabled: false
+      Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Min Color: 0; 0; 0
@@ -197,7 +188,35 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.009999999776482582
       Style: Flat Squares
-      Topic: /three
+      Topic: /two
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: Intensity
+      Decay Time: 0
+      Enabled: false
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Min Color: 0; 0; 0
+      Name: final
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.009999999776482582
+      Style: Flat Squares
+      Topic: /final
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -230,7 +249,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 8.257183074951172
+      Distance: 4.05273962020874
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -238,17 +257,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: -0.6033207178115845
-        Y: 0.07474765181541443
-        Z: 0.4630502164363861
+        X: -0.5156808495521545
+        Y: 1.0892362594604492
+        Z: 0.7253978848457336
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.4497978687286377
+      Pitch: 0.5547977089881897
       Target Frame: <Fixed Frame>
-      Yaw: 5.743569850921631
+      Yaw: 6.068569660186768
     Saved: ~
 Window Geometry:
   Displays:
@@ -267,4 +286,4 @@ Window Geometry:
     collapsed: true
   Width: 1850
   X: 519
-  Y: 116
+  Y: 79

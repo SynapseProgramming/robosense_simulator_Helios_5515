@@ -13,7 +13,8 @@ class pclmerger {
 public:
   pclmerger();
 
-  void callback(const sensor_msgs::PointCloud2ConstPtr &threef,
+  void callback(const sensor_msgs::PointCloud2ConstPtr &twof,
+                const sensor_msgs::PointCloud2ConstPtr &threef,
                 const sensor_msgs::PointCloud2ConstPtr &fourf,
                 const sensor_msgs::PointCloud2ConstPtr &fivef);
 
@@ -23,9 +24,10 @@ private:
 
   typedef message_filters::sync_policies::ApproximateTime<
       sensor_msgs::PointCloud2, sensor_msgs::PointCloud2,
-      sensor_msgs::PointCloud2>
+      sensor_msgs::PointCloud2, sensor_msgs::PointCloud2>
       TimePolicy;
 
+  message_filters::Subscriber<sensor_msgs::PointCloud2> twosub;
   message_filters::Subscriber<sensor_msgs::PointCloud2> threesub;
   message_filters::Subscriber<sensor_msgs::PointCloud2> foursub;
   message_filters::Subscriber<sensor_msgs::PointCloud2> fivesub;
